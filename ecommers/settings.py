@@ -133,13 +133,14 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'muhammadhairtemoorlatif@gmail.com'
+EMAIL_HOST_USER = 'awaisryk56@gmail.com'
 EMAIL_HOST_PASSWORD = 'kmziishtrpqgygbn' # Maslan: 'vwyzabcdefghijkl'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 # ML model path (local file)
 WHEAT_QUALITY_MODEL_PATH = BASE_DIR / "models" / "wheat_quality.keras"
+
 # E-commerce Business Logic
 SHIPPING_COST = 25
 
