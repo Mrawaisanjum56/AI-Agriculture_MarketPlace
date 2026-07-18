@@ -1,0 +1,162 @@
+{% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+{% endif %}
+
+<div class="form-group">
+    <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+    {{ form.name }}
+    {% for error in form.name.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+</div>
+<div class="form-group">
+    <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+    {{ form.category }}
+    {% for error in form.category.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+</div>
+<div class="form-group">
+    <label for="{{ form.market_location.id_for_label }}">{{ form.market_location.label }}</label>
+    {{ form.market_location }}
+    {% for error in form.market_location.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+</div>
+<div class="form-group">
+    <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+    {{ form.description }}
+    {% for error in form.description.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+</div>
+<div class="form-group">
+    <label for="{{ form.stock.id_for_label }}">{{ form.stock.label }}</label>
+    {{ form.stock }}
+    {% for error in form.stock.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+</div>
+<div class="form-group">
+    <label for="{{ form.image.id_for_label }}">{{ form.image.label }}</label>
+    <div class="d-flex align-items-center">
+        <div class="flex-grow-1">{{ form.image }}</div>
+        <button type="button" class="btn btn-outline-primary rounded-pill ml-2 js-run-model">
+            <span class="spinner-border spinner-border-sm mr-2 d-none js-run-model-spinner" role="status" aria-hidden="true"></span>
+            <span class="js-run-model-label">Run Model</span>
+        </button>
+    </div>
+    {% for error in form.image.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+    <small class="form-text text-muted">Run model to auto-fill quality and market price before submit.</small>
+</div>
+
+<div class="form-group">
+    <label>Quality Grade</label>
+    <input
+        type="text"
+        class="form-control rounded-pill border-0 shadow-sm px-4 bg-light js-quality-grade"
+        value="{% if product.quality_grade %}{{ product.quality_grade }}{% endif %}"
+        readonly
+    >
+</div>
+<div class="form-group">
+    <label>Quality Confidence (%)</label>
+    <input
+        type="text"
+        class="form-control rounded-pill border-0 shadow-sm px-4 bg-light js-quality-confidence"
+        value="{% if product.quality_confidence %}{{ product.quality_confidence }}{% endif %}"
+        readonly
+    >
+</div>
+<div class="form-group">
+    <label>Auto Price (Per Kg)</label>
+    <input
+        type="text"
+        class="form-control rounded-pill border-0 shadow-sm px-4 bg-light js-auto-price"
+        value="{% if product.price %}{{ product.price }}{% endif %}"
+        readonly
+    >
+</div>
+<div class="text-danger small mb-2 js-model-error"></div>
+
+<script>
+    (function () {
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return '';
+        }
+
+        function getCsrfToken(form) {
+            const hiddenToken = form.querySelector('input[name="csrfmiddlewaretoken"]');
+            if (hiddenToken && hiddenToken.value) {
+                return hiddenToken.value;
+            }
+            return getCookie('csrftoken');
+        }
+
+        async function parseResponse(response) {
+            const contentType = response.headers.get('content-type') || '';
+            if (contentType.includes('application/json')) {
+                return response.json();
+            }
+            const text = await response.text();
+            return { error: text || 'Failed to run model.' };
+        }
+
+        async function runModel(button) {
+            const form = button.closest('form');
+            if (!form) return;
+
+            const errorBox = form.querySelector('.js-model-error');
+            const qualityGrade = form.querySelector('.js-quality-grade');
+            const qualityConfidence = form.querySelector('.js-quality-confidence');
+            const autoPrice = form.querySelector('.js-auto-price');
+            const spinner = button.querySelector('.js-run-model-spinner');
+            const buttonLabel = button.querySelector('.js-run-model-label');
+            const imageField = form.querySelector('[name="image"]');
+            const categoryField = form.querySelector('[name="category"]');
+            const locationField = form.querySelector('[name="market_location"]');
+
+            if (errorBox) {
+                errorBox.textContent = '';
+            }
+            button.disabled = true;
+            if (spinner) spinner.classList.remove('d-none');
+            if (buttonLabel) buttonLabel.textContent = 'Running...';
+
+            const payload = new FormData();
+            payload.append('category', categoryField ? categoryField.value : '');
+            payload.append('market_location', locationField ? locationField.value : '');
+            if (imageField && imageField.files && imageField.files[0]) {
+                payload.append('image', imageField.files[0]);
+            }
+
+            try {
+                const response = await fetch("{% url 'analyze_product_listing' %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCsrfToken(form),
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    },
+                    body: payload,
+                    credentials: 'same-origin'
+                });
+                const data = await parseResponse(response);
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to run model.');
+                }
+                if (qualityGrade) qualityGrade.value = data.quality_grade || '';
+                if (qualityConfidence) qualityConfidence.value = data.quality_confidence || '';
+                if (autoPrice) autoPrice.value = data.price || '';
+            } catch (error) {
+                if (errorBox) {
+                    errorBox.textContent = error.message;
+                }
+            } finally {
+                button.disabled = false;
+                if (spinner) spinner.classList.add('d-none');
+                if (buttonLabel) buttonLabel.textContent = 'Run Model';
+            }
+        }
+
+        document.addEventListener('click', function (event) {
+            const button = event.target.closest('.js-run-model');
+            if (!button) return;
+            event.preventDefault();
+            runModel(button);
+        });
+    })();
+</script>

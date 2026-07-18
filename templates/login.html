@@ -1,0 +1,159 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Login | project</title>
+	<link rel="icon" type="image/svg+xml" href="{% static 'assets/img/tractor-favicon.svg' %}">
+
+	<!-- google font -->
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'assets/css/all.min.css' %}">
+	<!-- main style -->
+	<link rel="stylesheet" href="{% static 'assets/css/main.css' %}">
+	<!-- responsive -->
+	<link rel="stylesheet" href="{% static 'assets/css/responsive.css' %}">
+
+	<style>
+		body {
+			background: linear-gradient(130deg, #041e2a, #0f4258, #f28123);
+			background-size: 200% 200%;
+			animation: bgShift 10s ease infinite;
+			height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+			position: relative;
+		}
+		body::before,
+		body::after {
+			content: "";
+			position: fixed;
+			border-radius: 50%;
+			filter: blur(40px);
+			opacity: 0.35;
+			z-index: 0;
+			animation: floatBlob 8s ease-in-out infinite alternate;
+		}
+		body::before {
+			width: 260px;
+			height: 260px;
+			background: #f28123;
+			top: -60px;
+			left: -40px;
+		}
+		body::after {
+			width: 320px;
+			height: 320px;
+			background: #52c2ff;
+			right: -70px;
+			bottom: -80px;
+		}
+		.login-card {
+			position: relative;
+			z-index: 2;
+			background: rgba(255, 255, 255, 0.98);
+			padding: 50px;
+			border-radius: 15px;
+			box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+			width: 100%;
+			max-width: 450px;
+			backdrop-filter: blur(8px);
+		}
+		.login-card h2 {
+			font-weight: 700;
+			margin-bottom: 30px;
+			color: #051922;
+		}
+		.login-card label {
+			font-weight: 600;
+			color: #051922;
+			margin-bottom: 5px;
+		}
+		.login-card input {
+			border: 1px solid #ddd;
+			border-radius: 5px;
+			padding: 12px;
+			margin-bottom: 20px;
+			width: 100%;
+		}
+		.password-toggle-wrap {
+			position: relative;
+		}
+		.password-toggle-wrap input[type="password"] {
+			padding-right: 42px;
+		}
+		.password-toggle-wrap input {
+			margin-bottom: 20px;
+		}
+		.password-toggle-btn {
+			position: absolute;
+			right: 12px;
+			top: 50%;
+			transform: translateY(-50%);
+			border: none;
+			background: transparent;
+			color: #6e7f89;
+			cursor: pointer;
+			padding: 0;
+		}
+		@keyframes bgShift {
+			0% { background-position: 0% 50%; }
+			50% { background-position: 100% 50%; }
+			100% { background-position: 0% 50%; }
+		}
+		@keyframes floatBlob {
+			from { transform: translateY(0) translateX(0); }
+			to { transform: translateY(30px) translateX(20px); }
+		}
+		.boxed-btn {
+			width: 100%;
+			border: none;
+			cursor: pointer;
+			font-size: 16px;
+			padding: 12px;
+			background-color: #051922;
+			color: #fff;
+			border-radius: 8px;
+			transition: background-color 0.3s ease, transform 0.2s ease;
+		}
+		.boxed-btn:hover {
+			background-color: #F28123;
+			color: #fff;
+			transform: translateY(-2px);
+		}
+		.boxed-btn:focus {
+			outline: 2px solid #F28123;
+			outline-offset: 2px;
+			box-shadow: 0 0 0 0.2rem rgba(242, 129, 35, 0.25);
+		}
+		.back-home {
+			display: block;
+			margin-top: 25px;
+			color: #F28123;
+			font-weight: 600;
+			text-decoration: none;
+		}
+	</style>
+</head>
+<body>
+	<div class="login-card text-center">
+		<h2>Login</h2>
+		<form method="post">
+			{% csrf_token %}
+			{% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+			<div class="text-left">{{ form.as_p }}</div>
+			<button type="submit" class="boxed-btn">Login</button>
+		</form>
+		<p class="mt-4">Don't have an account? <a href="{% url 'register' %}{% if next %}?next={{ next }}{% endif %}" style="color: #F28123; font-weight: bold;">Register here</a></p>
+		<a href="{% url 'home' %}" class="back-home">← Back to Home</a>
+	</div>
+	<script src="{% static 'shop/password_toggle.js' %}"></script>
+</body>
+</html>

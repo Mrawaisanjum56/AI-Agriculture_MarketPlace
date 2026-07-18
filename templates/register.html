@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Register | project</title>
+	<link rel="icon" type="image/svg+xml" href="{% static 'assets/img/tractor-favicon.svg' %}">
+
+	<!-- google font -->
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'assets/css/all.min.css' %}">
+	<!-- main style -->
+	<link rel="stylesheet" href="{% static 'assets/css/main.css' %}">
+	<!-- responsive -->
+	<link rel="stylesheet" href="{% static 'assets/css/responsive.css' %}">
+
+	<style>
+		body {
+			background: linear-gradient(130deg, #041e2a, #0f4258, #f28123);
+			background-size: 200% 200%;
+			animation: bgShift 10s ease infinite;
+			height: auto;
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 24px 12px;
+			overflow-y: auto;
+			position: relative;
+		}
+		body::before {
+			content: "";
+			position: fixed;
+			inset: 0;
+			background: radial-gradient(circle at 15% 20%, rgba(242, 129, 35, 0.45), transparent 35%),
+						radial-gradient(circle at 85% 80%, rgba(82, 194, 255, 0.3), transparent 42%);
+			z-index: 0;
+			animation: floatBackdrop 8s ease-in-out infinite alternate;
+		}
+		.register-card {
+			position: relative;
+			z-index: 1;
+			background: rgba(255, 255, 255, 0.96);
+			padding: 30px 28px 24px;
+			border-radius: 18px;
+			box-shadow: 0 20px 45px rgba(0,0,0,0.28);
+			width: 100%;
+			max-width: 500px;
+			margin: auto;
+		}
+		.register-card h2 {
+			font-weight: 700;
+			margin-bottom: 6px;
+			color: #051922;
+		}
+		.register-subtitle {
+			font-size: 0.92rem;
+			color: #5c6f79;
+			margin-bottom: 18px;
+		}
+		.register-card label {
+			font-weight: 600;
+			color: #051922;
+			margin-bottom: 5px;
+			font-size: 0.9em;
+			display: block;
+		}
+		.register-card input, .register-card select, .register-card textarea {
+			border: 1px solid #ddd;
+			border-radius: 10px;
+			padding: 10px 12px;
+			margin-bottom: 4px;
+			width: 100%;
+		}
+		.password-toggle-wrap input[type="password"] {
+			padding-right: 42px;
+		}
+		.password-toggle-wrap {
+			position: relative;
+		}
+		.password-toggle-btn {
+			position: absolute;
+			right: 12px;
+			top: 50%;
+			transform: translateY(-50%);
+			border: none;
+			background: transparent;
+			color: #6e7f89;
+			cursor: pointer;
+			padding: 0;
+		}
+		.register-card textarea {
+			height: 72px; 
+			resize: none;
+		}
+		.boxed-btn {
+			width: 100%;
+			border: none;
+			cursor: pointer;
+			font-size: 16px;
+			padding: 12px;
+			margin-top: 10px;
+		}
+		.helptext {
+			font-size: 0.72em;
+			color: #666;
+			display: block;
+			margin-bottom: 8px;
+			line-height: 1.4;
+		}
+		.register-card p {
+			margin-bottom: 10px;
+		}
+		.register-card ul.errorlist {
+			list-style: none;
+			padding-left: 0;
+			margin-bottom: 8px;
+			color: #b81428;
+			font-size: 0.82rem;
+		}
+		.register-card .field-block p {
+			margin-bottom: 8px;
+		}
+		@media (max-width: 576px) {
+			.register-card {
+				padding: 24px 16px 20px;
+				border-radius: 14px;
+			}
+		}
+		@keyframes bgShift {
+			0% { background-position: 0% 50%; }
+			50% { background-position: 100% 50%; }
+			100% { background-position: 0% 50%; }
+		}
+		@keyframes floatBackdrop {
+			from { transform: translateY(0); }
+			to { transform: translateY(24px); }
+		}
+	</style>
+</head>
+<body>
+	<div class="register-card text-center">
+		<h2>Register</h2>
+		<p class="register-subtitle">Create your account to start buying and selling.</p>
+		<form method="post">
+			{% csrf_token %}
+			{% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+			<div class="text-left field-block">{{ form.as_p }}</div>
+			<button type="submit" class="boxed-btn">Register</button>
+		</form>
+		<p class="mt-2 mb-1">Already have an account? <a href="{% url 'login' %}{% if next %}?next={{ next }}{% endif %}" style="color: #F28123; font-weight: bold;">Login here</a></p>
+		<a href="{% url 'home' %}" style="color: #F28123; font-weight: 600; text-decoration: none; display: block; margin-top: 5px;">← Back to Home</a>
+	</div>
+	<script src="{% static 'shop/password_toggle.js' %}"></script>
+</body>
+</html>
