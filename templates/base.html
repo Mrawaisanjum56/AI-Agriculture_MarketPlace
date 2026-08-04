@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="Responsive Bootstrap4 Shop Template, Created by Awais Anjum and M. Haris from https://imransdesign.com/">
+	<meta name="description" content="Responsive Bootstrap4 Shop Template, Created by Awais Anjum and M. Haris from https://github.com/Mrawaisanjum56">
 
 	<!-- title -->
 	<title>{% block title %}AI-Agriculture MarketPlace {% endblock %}</title>
@@ -65,11 +65,13 @@
 						<!-- menu start -->
 						<nav class="main-menu">
 							<ul>
-								<li class="current-list-item"><a href="#">Home</a>
+								<li class="current-list-item"><a href="{% url 'home' %}">Home</a>
+									{% comment%}
 									<ul class="sub-menu">
 										<li><a href="{% url 'home' %}">Static Home</a></li>
 										<li><a href="{% url 'index-2' %}">Slider Home</a></li>
 									</ul>
+									{% endcomment%}
 								</li>
 								<li><a href="{% url 'about' %}">About</a></li>
 								{% comment %} <li><a href="#">Pages</a>
@@ -253,8 +255,8 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-6 col-md-12">
-					<p>Copyrights &copy; 2026 - <a href="https://imransdesign.com/">Awais Anjum, M Haris</a>,  All Rights Reserved.<br>
-						Distributed By - <a href="https://themewagon.com/">Final Year Project</a>
+					<p>Copyrights &copy; 2026 - <a href="https://github.com/Mrawaisanjum56" target ="_blank">Awais Anjum, M Haris</a>,  All Rights Reserved.<br>
+						Distributed By - <a href="https://github.com/Mrawaisanjum56" target= "_blank">Mr. Awais Anjum</a>
 					</p>
 				</div>
 				<div class="col-lg-6 text-right col-md-12">
